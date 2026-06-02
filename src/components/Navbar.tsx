@@ -42,11 +42,11 @@ export function Navbar() {
               </Link>
             ))}
             <a
-              href="tel:9701858550"
+              href="tel:3014078822"
               className="ml-4 inline-flex items-center gap-2 rounded-lg bg-ark-red px-5 py-2.5 text-sm font-bold text-white hover:bg-ark-red-dark transition-colors duration-200"
             >
               <PhoneIcon />
-              (970) 185-8550
+              (301) 407-8822
             </a>
           </div>
 
@@ -96,11 +96,11 @@ export function Navbar() {
               </Link>
             ))}
             <a
-              href="tel:9701858550"
+              href="tel:3014078822"
               className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-ark-red px-5 py-3 text-base font-bold text-white hover:bg-ark-red-dark transition-colors"
             >
               <PhoneIcon />
-              (970) 185-8550
+              (301) 407-8822
             </a>
           </div>
         </div>

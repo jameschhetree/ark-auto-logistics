@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import Image from "next/image";
 
 interface FormData {
   pickupZip: string;
@@ -147,17 +146,25 @@ export function QuoteForm({ variant = "stepped" }: { variant?: "stepped" | "full
         <p className="text-sm text-ark-muted mb-1">
           Get your quote now or contact us directly!
         </p>
-        <a href="tel:9701858550" className="text-ark-red font-bold text-lg hover:text-ark-red-dark transition-colors">
-          (970) 185-8550
+        <a href="tel:3014078822" className="text-ark-red font-bold text-lg hover:text-ark-red-dark transition-colors">
+          (301) 407-8822
         </a>
       </div>
 
-      {/* Yellow CTA banner */}
+      {/* Yellow CTA banner — HTML/CSS so phone stays editable */}
       <a
-        href="tel:9701858550"
-        className="flex items-center justify-center gap-3 bg-ark-gold hover:bg-ark-gold-dark transition-colors py-3 px-4"
+        href="tel:3014078822"
+        className="flex items-center justify-center gap-3 bg-ark-gold hover:bg-ark-gold-dark transition-colors py-3 px-4 font-black"
       >
-        <Image src="/banner.webp" alt="Call Now & Get A Quote (970) 185-8550" width={500} height={60} className="h-10 w-auto" />
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+        </svg>
+        <span className="text-[#111] italic uppercase tracking-tight text-sm sm:text-base">
+          Call Now &amp; Get a Quote
+        </span>
+        <span className="text-ark-red text-base sm:text-lg leading-none">
+          (301) 407-8822
+        </span>
       </a>
 
       {/* Step indicator */}

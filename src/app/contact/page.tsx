@@ -15,8 +15,8 @@ const CARDS = [
       </svg>
     ),
     label: "Phone",
-    value: "(970) 185-8550",
-    href: "tel:9701858550",
+    value: "(301) 407-8822",
+    href: "tel:3014078822",
   },
   {
     icon: (
