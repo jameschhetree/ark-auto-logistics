@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-ark-bg: #0B0D12;
+  --color-ark-surface: #111827;
+  --color-ark-border: rgba(255, 255, 255, 0.18);
+  --color-ark-text: #FFFFFF;
+  --color-ark-muted: rgba(255, 255, 255, 0.72);
+  --color-ark-red: #E11D2E;
+  --color-ark-red-dark: #B3121F;
+  --color-ark-blue: #0B66C3;
+  --color-ark-blue-dark: #064D97;
+  --color-ark-silver: #E6EAF0;
+  --color-ark-gold: #F4C430;
+  --color-ark-gold-dark: #D4A820;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #0B0D12;
+  color: #FFFFFF;
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #111827;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #E11D2E;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B3121F;
+}
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #E11D2E #111827;
+}
+
+/* Radio button custom styling */
+input[type="radio"] {
+  accent-color: #E11D2E;
+}
+
+/* Form input focus */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #E11D2E !important;
+  box-shadow: 0 0 0 2px rgba(225, 29, 46, 0.25);
 }
