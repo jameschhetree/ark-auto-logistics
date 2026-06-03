@@ -37,10 +37,10 @@ export function Hero() {
             {/* Check bullets */}
             <ul className="mt-8 space-y-3">
               {[
-                "Licensed & Insured",
                 "Nationwide Coverage",
-                "Competitive Pricing",
+                "Licensed & Insured",
                 "Dedicated Support",
+                "Competitive Pricing",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-white">
                   <span className="flex-shrink-0 w-6 h-6 rounded-full bg-ark-red/20 flex items-center justify-center">
