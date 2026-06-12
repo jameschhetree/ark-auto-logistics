@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useRef, useEffect, FormEvent } from "react";
 
 interface FormData {
   pickupZip: string;
@@ -35,6 +35,42 @@ export function QuoteForm({ variant = "stepped" }: { variant?: "stepped" | "full
   const [form, setForm] = useState<FormData>(INITIAL);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    if (!siteKey || typeof window === "undefined") return;
+
+    const id = "turnstile-script";
+    if (!document.getElementById(id)) {
+      const script = document.createElement("script");
+      script.id = id;
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+      script.async = true;
+      document.head.appendChild(script);
+    }
+
+    const renderWidget = () => {
+      if (turnstileRef.current && window.turnstile && turnstileRef.current.childElementCount === 0) {
+        window.turnstile.render(turnstileRef.current, {
+          sitekey: siteKey,
+          callback: (token: string) => setTurnstileToken(token),
+          theme: "dark",
+          size: "compact",
+        });
+      }
+    };
+
+    const interval = setInterval(() => {
+      if (window.turnstile) {
+        renderWidget();
+        clearInterval(interval);
+      }
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const update = (key: keyof FormData, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -54,7 +90,7 @@ export function QuoteForm({ variant = "stepped" }: { variant?: "stepped" | "full
       const res = await fetch("/api/quote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, turnstileToken }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -264,6 +300,7 @@ export function QuoteForm({ variant = "stepped" }: { variant?: "stepped" | "full
             <Input label="Full Name*" value={form.name} onChange={(v) => update("name", v)} placeholder="John Doe" required accent />
             <Input label="Phone Number*" value={form.phone} onChange={(v) => update("phone", v)} placeholder="(555) 000-0000" required accent />
             <Input label="Email Address*" type="email" value={form.email} onChange={(v) => update("email", v)} placeholder="john@example.com" required accent />
+            <div ref={turnstileRef} className="flex justify-center" />
             {status === "error" && (
               <p className="text-red-400 text-sm">{errorMsg}</p>
             )}

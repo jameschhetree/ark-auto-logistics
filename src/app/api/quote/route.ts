@@ -1,9 +1,30 @@
 import { Resend } from "resend";
+import { getSupabase } from "@/lib/supabase";
+import { rateLimit } from "@/lib/rate-limit";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 export async function POST(request: Request) {
   try {
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "unknown";
+
+    if (!rateLimit(ip)) {
+      return Response.json(
+        { error: "Too many requests. Please try again in a minute." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const {
       pickupZip,
@@ -17,15 +38,95 @@ export async function POST(request: Request) {
       name,
       phone,
       email,
+      turnstileToken,
     } = body;
 
-    // Basic validation
     if (!pickupZip || !deliveryZip || !name || !phone || !email) {
       return Response.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
+
+    // Verify Cloudflare Turnstile token
+    if (process.env.TURNSTILE_SECRET_KEY) {
+      const turnstileRes = await fetch(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            secret: process.env.TURNSTILE_SECRET_KEY,
+            response: turnstileToken || "",
+            remoteip: ip,
+          }),
+        }
+      );
+      const turnstileData = await turnstileRes.json();
+      if (!turnstileData.success) {
+        return Response.json(
+          { error: "Spam verification failed. Please try again." },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Save to Supabase (primary — never lose a lead)
+    const supabase = getSupabase();
+    if (supabase) {
+      try {
+        await supabase.from("quotes").insert({
+          pickup_zip: pickupZip,
+          delivery_zip: deliveryZip,
+          transport_type: transportType,
+          vehicle_year: vehicleYear,
+          vehicle_make: vehicleMake,
+          vehicle_model: vehicleModel,
+          is_running: isRunning,
+          pickup_date: pickupDate || null,
+          name,
+          phone,
+          email,
+          status: "new",
+        });
+
+        // Upsert contact
+        const { data: existing } = await supabase
+          .from("contacts")
+          .select("id, total_quotes")
+          .eq("email", email)
+          .single();
+
+        if (existing) {
+          await supabase
+            .from("contacts")
+            .update({
+              total_quotes: existing.total_quotes + 1,
+              last_quote_date: new Date().toISOString(),
+              phone,
+              name,
+            })
+            .eq("id", existing.id);
+        } else {
+          await supabase.from("contacts").insert({ name, email, phone });
+        }
+      } catch (dbErr) {
+        console.error("[QUOTE_API] Supabase error (non-fatal):", dbErr);
+      }
+    }
+
+    // Send email notification
+    const safePickupZip = escapeHtml(pickupZip);
+    const safeDeliveryZip = escapeHtml(deliveryZip);
+    const safeTransportType = escapeHtml(transportType);
+    const safeYear = escapeHtml(vehicleYear || "");
+    const safeMake = escapeHtml(vehicleMake || "");
+    const safeModel = escapeHtml(vehicleModel || "");
+    const safeRunning = isRunning === "yes" ? "Yes" : "No";
+    const safePickupDate = escapeHtml(pickupDate || "");
+    const safeName = escapeHtml(name);
+    const safePhone = escapeHtml(phone);
+    const safeEmail = escapeHtml(email);
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -41,15 +142,15 @@ export async function POST(request: Request) {
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 8px 0; color: #666; font-size: 14px; width: 160px;">Pickup ZIP:</td>
-              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">${pickupZip}</td>
+              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">${safePickupZip}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #666; font-size: 14px;">Delivery ZIP:</td>
-              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">${deliveryZip}</td>
+              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">${safeDeliveryZip}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #666; font-size: 14px;">Transport Type:</td>
-              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600; text-transform: capitalize;">${transportType}</td>
+              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600; text-transform: capitalize;">${safeTransportType}</td>
             </tr>
           </table>
 
@@ -59,15 +160,15 @@ export async function POST(request: Request) {
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 8px 0; color: #666; font-size: 14px; width: 160px;">Vehicle:</td>
-              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">${vehicleYear} ${vehicleMake} ${vehicleModel}</td>
+              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">${safeYear} ${safeMake} ${safeModel}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #666; font-size: 14px;">Running:</td>
-              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600; text-transform: capitalize;">${isRunning === "yes" ? "Yes" : "No"}</td>
+              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">${safeRunning}</td>
             </tr>
-            ${pickupDate ? `<tr>
+            ${safePickupDate ? `<tr>
               <td style="padding: 8px 0; color: #666; font-size: 14px;">Preferred Pickup:</td>
-              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">${pickupDate}</td>
+              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">${safePickupDate}</td>
             </tr>` : ""}
           </table>
 
@@ -77,18 +178,18 @@ export async function POST(request: Request) {
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 8px 0; color: #666; font-size: 14px; width: 160px;">Name:</td>
-              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">${name}</td>
+              <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">${safeName}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #666; font-size: 14px;">Phone:</td>
               <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">
-                <a href="tel:${phone}" style="color: #E11D2E; text-decoration: none;">${phone}</a>
+                <a href="tel:${safePhone}" style="color: #E11D2E; text-decoration: none;">${safePhone}</a>
               </td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #666; font-size: 14px;">Email:</td>
               <td style="padding: 8px 0; color: #111; font-size: 14px; font-weight: 600;">
-                <a href="mailto:${email}" style="color: #E11D2E; text-decoration: none;">${email}</a>
+                <a href="mailto:${safeEmail}" style="color: #E11D2E; text-decoration: none;">${safeEmail}</a>
               </td>
             </tr>
           </table>
