@@ -73,9 +73,9 @@ export function WhyChoose() {
           {REASONS.map((r) => (
             <div
               key={r.title}
-              className="group rounded-xl bg-ark-surface border border-ark-border p-8 hover:border-ark-red/40 transition-all duration-300 hover:-translate-y-1"
+              className="group rounded-xl bg-ark-surface border border-ark-border p-8 hover:border-ark-gold/40 transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="w-12 h-12 rounded-lg bg-ark-red/10 flex items-center justify-center text-ark-red mb-5 group-hover:bg-ark-red/20 transition-colors">
+              <div className="w-12 h-12 rounded-lg bg-ark-gold/10 flex items-center justify-center text-ark-gold mb-5 group-hover:bg-ark-gold/20 transition-colors">
                 {r.icon}
               </div>
               <h3 className="text-lg font-bold text-white mb-2">{r.title}</h3>
