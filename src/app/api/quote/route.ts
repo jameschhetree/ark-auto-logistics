@@ -223,7 +223,7 @@ Customer:
 
     const result = await resend.emails.send({
       from: "Ark Auto Logistics <bookings@highlifedmv.com>",
-      to: ["info@arkautologistics.com"],
+      to: ["arkautologistics@gmail.com"],
       subject: `New Quote: ${vehicleYear} ${vehicleMake} ${vehicleModel} | ${pickupZip} to ${deliveryZip}`,
       html,
       text,
