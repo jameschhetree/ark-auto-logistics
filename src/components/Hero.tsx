@@ -43,8 +43,8 @@ export function Hero() {
                 "Competitive Pricing",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-white">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-ark-red/20 flex items-center justify-center">
-                    <svg className="w-3.5 h-3.5 text-ark-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-yellow-400/20 flex items-center justify-center">
+                    <svg className="w-3.5 h-3.5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </span>
