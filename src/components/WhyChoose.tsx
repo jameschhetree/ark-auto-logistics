@@ -7,6 +7,7 @@ const REASONS = [
     ),
     title: "Fast Vehicle Pickup",
     body: "Quick scheduling with pickups arranged within days, not weeks.",
+    accent: "from-cyan-400 to-blue-500",
   },
   {
     icon: (
@@ -16,6 +17,7 @@ const REASONS = [
     ),
     title: "Professional Carrier Network",
     body: "Vetted, insured carriers with proven track records across all 50 states.",
+    accent: "from-amber-400 to-orange-500",
   },
   {
     icon: (
@@ -25,6 +27,7 @@ const REASONS = [
     ),
     title: "Dealer-to-Dealer Transport",
     body: "Seamless inventory transfers between dealership locations nationwide.",
+    accent: "from-emerald-400 to-green-500",
   },
   {
     icon: (
@@ -34,6 +37,7 @@ const REASONS = [
     ),
     title: "Auction Transportation",
     body: "Reliable pickup from Copart, IAA, Manheim, and other major auctions.",
+    accent: "from-violet-400 to-purple-500",
   },
   {
     icon: (
@@ -44,6 +48,7 @@ const REASONS = [
     ),
     title: "Door-to-Door Service",
     body: "We pick up and deliver directly to your specified locations.",
+    accent: "from-rose-400 to-red-500",
   },
   {
     icon: (
@@ -53,33 +58,54 @@ const REASONS = [
     ),
     title: "Real-Time Shipment Updates",
     body: "Stay informed with tracking updates from pickup to delivery.",
+    accent: "from-sky-400 to-indigo-500",
   },
 ];
 
 export function WhyChoose() {
   return (
-    <section className="py-24 bg-ark-bg">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+    <section className="relative py-28 bg-ark-bg overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(244,196,48,0.06),transparent_60%)]" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ark-gold/20 to-transparent" />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-20">
+          <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] text-ark-gold mb-4">
+            Our Advantage
+          </span>
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
             Why Choose Ark Auto Logistics
           </h2>
-          <p className="mt-4 text-ark-muted text-lg max-w-2xl mx-auto">
+          <p className="mt-5 text-ark-muted text-lg max-w-2xl mx-auto leading-relaxed">
             Industry-leading service backed by years of experience in vehicle transportation.
           </p>
+          <div className="mt-6 mx-auto w-16 h-1 rounded-full bg-gradient-to-r from-ark-gold to-ark-gold-dark" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {REASONS.map((r) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {REASONS.map((r, i) => (
             <div
               key={r.title}
-              className="group rounded-xl bg-ark-surface border border-ark-border p-8 hover:border-ark-gold/40 transition-all duration-300 hover:-translate-y-1"
+              className="group relative rounded-2xl bg-ark-surface border border-ark-border p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-black/30 hover:border-ark-gold/30"
             >
-              <div className="w-12 h-12 rounded-lg bg-ark-gold/10 flex items-center justify-center text-ark-gold mb-5 group-hover:bg-ark-gold/20 transition-colors">
-                {r.icon}
+              {/* Subtle gradient overlay on hover */}
+              <div className={`absolute -inset-px rounded-2xl bg-gradient-to-br ${r.accent} opacity-0 group-hover:opacity-[0.06] transition-opacity duration-500 pointer-events-none`} />
+
+              {/* Icon */}
+              <div className="relative">
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${r.accent} p-[1px] group-hover:scale-110 transition-transform duration-500`}>
+                  <div className="w-full h-full rounded-xl bg-ark-surface flex items-center justify-center text-white">
+                    {r.icon}
+                  </div>
+                </div>
+                <div className={`absolute -bottom-1 left-3 w-8 h-2 rounded-full bg-gradient-to-r ${r.accent} opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-500`} />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">{r.title}</h3>
-              <p className="text-sm text-ark-muted leading-relaxed">{r.body}</p>
+
+              <h3 className="relative mt-6 text-lg font-bold text-white mb-2">{r.title}</h3>
+              <p className="relative text-sm text-ark-muted leading-relaxed group-hover:text-white/75 transition-colors duration-300">{r.body}</p>
+
+              {/* Bottom accent */}
+              <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r ${r.accent} group-hover:w-1/2 transition-all duration-500 rounded-full`} />
             </div>
           ))}
         </div>

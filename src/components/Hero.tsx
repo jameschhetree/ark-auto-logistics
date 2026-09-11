@@ -7,7 +7,7 @@ export function Hero() {
       {/* Background image with dark overlay */}
       <div className="absolute inset-0">
         <Image
-          src="/hero.jpg"
+          src="/hero-v2.jpg"
           alt="Car carrier truck transporting vehicles"
           fill
           className="object-cover"

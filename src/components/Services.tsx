@@ -7,7 +7,10 @@ const SERVICES = [
     ),
     title: "Dealer Transport",
     description: "Helping dealerships move inventory quickly and efficiently across state lines.",
-    color: "from-blue-500/20 to-blue-600/10",
+    gradient: "from-blue-500 to-cyan-400",
+    glow: "shadow-blue-500/30",
+    border: "hover:border-blue-500/50",
+    number: "01",
   },
   {
     icon: (
@@ -17,7 +20,10 @@ const SERVICES = [
     ),
     title: "Auction Transport",
     description: "Vehicle transportation from auctions such as Copart, IAA, and Manheim.",
-    color: "from-amber-500/20 to-amber-600/10",
+    gradient: "from-amber-400 to-yellow-300",
+    glow: "shadow-amber-500/30",
+    border: "hover:border-amber-500/50",
+    number: "02",
   },
   {
     icon: (
@@ -27,7 +33,10 @@ const SERVICES = [
     ),
     title: "Open Auto Transport",
     description: "The most affordable option for standard vehicles. Safe, reliable, and cost-effective.",
-    color: "from-green-500/20 to-green-600/10",
+    gradient: "from-emerald-500 to-green-400",
+    glow: "shadow-emerald-500/30",
+    border: "hover:border-emerald-500/50",
+    number: "03",
   },
   {
     icon: (
@@ -37,38 +46,75 @@ const SERVICES = [
     ),
     title: "Enclosed Auto Transport",
     description: "Extra protection for luxury, classic, and exotic vehicles during transit.",
-    color: "from-red-500/20 to-red-600/10",
+    gradient: "from-red-500 to-rose-400",
+    glow: "shadow-red-500/30",
+    border: "hover:border-red-500/50",
+    number: "04",
   },
 ];
 
 export function Services() {
   return (
-    <section id="services" className="py-24 bg-ark-surface scroll-mt-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+    <section id="services" className="relative py-28 scroll-mt-20 overflow-hidden">
+      {/* Background with subtle gradient */}
+      <div className="absolute inset-0 bg-ark-surface" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,46,0.08),transparent_60%)]" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ark-red/30 to-transparent" />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-20">
+          <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] text-ark-red mb-4">
+            What We Do
+          </span>
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
             Our Services
           </h2>
-          <p className="mt-4 text-ark-muted text-lg max-w-2xl mx-auto">
+          <p className="mt-5 text-ark-muted text-lg max-w-2xl mx-auto leading-relaxed">
             Comprehensive auto transport solutions tailored to your needs.
           </p>
+          <div className="mt-6 mx-auto w-16 h-1 rounded-full bg-gradient-to-r from-ark-red to-ark-red-dark" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {SERVICES.map((s) => (
             <div
               key={s.title}
-              className="group rounded-xl bg-ark-bg border border-ark-border p-8 text-center hover:border-ark-red/40 transition-all duration-300 hover:-translate-y-1"
+              className={`group relative rounded-2xl bg-ark-bg border border-ark-border p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl ${s.glow} ${s.border}`}
             >
-              <div className={`mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br ${s.color} flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                {s.icon}
+              {/* Hover glow effect behind card */}
+              <div className={`absolute -inset-px rounded-2xl bg-gradient-to-b ${s.gradient} opacity-0 group-hover:opacity-[0.07] transition-opacity duration-500 pointer-events-none`} />
+
+              {/* Number tag */}
+              <span className="absolute top-4 right-4 text-[10px] font-mono font-bold text-white/20 group-hover:text-white/40 transition-colors">
+                {s.number}
+              </span>
+
+              {/* Icon with gradient background */}
+              <div className="relative mx-auto mb-6">
+                <div className={`w-18 h-18 mx-auto rounded-2xl bg-gradient-to-br ${s.gradient} p-[1px] group-hover:scale-110 transition-transform duration-500`}>
+                  <div className="w-full h-full rounded-2xl bg-ark-bg flex items-center justify-center p-4">
+                    <div className="text-white">{s.icon}</div>
+                  </div>
+                </div>
+                {/* Glow dot under icon */}
+                <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-3 rounded-full bg-gradient-to-r ${s.gradient} opacity-0 group-hover:opacity-40 blur-md transition-opacity duration-500`} />
               </div>
-              <h3 className="text-lg font-bold text-white mb-3">{s.title}</h3>
-              <p className="text-sm text-ark-muted leading-relaxed">{s.description}</p>
+
+              <h3 className="relative text-lg font-bold text-white mb-3 group-hover:text-white transition-colors">
+                {s.title}
+              </h3>
+              <p className="relative text-sm text-ark-muted leading-relaxed group-hover:text-white/80 transition-colors duration-300">
+                {s.description}
+              </p>
+
+              {/* Bottom accent line */}
+              <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r ${s.gradient} group-hover:w-2/3 transition-all duration-500 rounded-full`} />
             </div>
           ))}
         </div>
       </div>
+
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
     </section>
   );
 }
