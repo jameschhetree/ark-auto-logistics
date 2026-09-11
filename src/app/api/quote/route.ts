@@ -74,6 +74,12 @@ export async function POST(request: Request) {
     // Save to the CRM (primary — never lose a lead). A quote request either
     // creates a contact at stage "new" or marks an existing one as due today;
     // the quote itself lands on their record either way.
+    //
+    // The request counts as taken when this save OR the notification email
+    // below succeeds. Only when both fail does the visitor see an error —
+    // a confirmation with nothing durable behind it is how leads got lost
+    // silently before.
+    let saved = false;
     const supabase = getSupabase();
     if (supabase) {
       try {
@@ -92,7 +98,7 @@ export async function POST(request: Request) {
           // Keep their stage — a returning customer asking for a quote is not
           // a "new lead" again. They are hot, so they go due today.
           contactId = existing.id;
-          await supabase
+          const { error: updateErr } = await supabase
             .from("ark_contacts")
             .update({
               name,
@@ -101,6 +107,7 @@ export async function POST(request: Request) {
               updated_at: new Date().toISOString(),
             })
             .eq("id", contactId);
+          if (updateErr) throw updateErr;
         } else {
           const { data: created, error: createErr } = await supabase
             .from("ark_contacts")
@@ -111,7 +118,7 @@ export async function POST(request: Request) {
           contactId = created.id;
         }
 
-        await supabase.from("ark_quotes").insert({
+        const { error: quoteErr } = await supabase.from("ark_quotes").insert({
           contact_id: contactId,
           pickup_zip: pickupZip,
           delivery_zip: deliveryZip,
@@ -122,8 +129,10 @@ export async function POST(request: Request) {
           is_running: isRunning,
           pickup_date: pickupDate || null,
         });
+        if (quoteErr) throw quoteErr;
+        saved = true;
       } catch (dbErr) {
-        console.error("[QUOTE_API] Supabase error (non-fatal):", dbErr);
+        console.error("[QUOTE_API] CRM save failed:", dbErr);
       }
     }
 
@@ -242,13 +251,26 @@ Customer:
       replyTo: email,
     });
 
-    // The SDK reports API failures in result.error rather than throwing. The
-    // lead is already stored above, so a failed notification email must be
-    // loud in the logs but must not read as a failed submission.
+    // The SDK reports API failures in result.error rather than throwing.
+    const sent = !result.error;
     if (result.error) {
       console.error("[QUOTE_API] Email failed:", result.error);
     } else {
       console.log("[QUOTE_API] Email sent:", result.data?.id);
+    }
+
+    // Neither the CRM save nor the email worked: nothing durable holds this
+    // request, so telling the visitor "success" would lose their lead
+    // silently. Tell them plainly and point them at the phone.
+    if (!saved && !sent) {
+      console.error("[QUOTE_API] Request not captured anywhere — surfacing to visitor");
+      return Response.json(
+        {
+          error:
+            "We could not take your request right now. Please call us at (301) 407-8822 and we will quote you over the phone.",
+        },
+        { status: 500 }
+      );
     }
 
     return Response.json(
