@@ -71,11 +71,48 @@ export async function POST(request: Request) {
       }
     }
 
-    // Save to Supabase (primary — never lose a lead)
+    // Save to the CRM (primary — never lose a lead). A quote request either
+    // creates a contact at stage "new" or marks an existing one as due today;
+    // the quote itself lands on their record either way.
     const supabase = getSupabase();
     if (supabase) {
       try {
-        await supabase.from("quotes").insert({
+        const today = new Date().toLocaleDateString("en-CA", {
+          timeZone: "America/New_York",
+        });
+
+        const { data: existing } = await supabase
+          .from("ark_contacts")
+          .select("id")
+          .eq("email", email)
+          .maybeSingle();
+
+        let contactId: string;
+        if (existing) {
+          // Keep their stage — a returning customer asking for a quote is not
+          // a "new lead" again. They are hot, so they go due today.
+          contactId = existing.id;
+          await supabase
+            .from("ark_contacts")
+            .update({
+              name,
+              phone,
+              next_touch_at: today,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", contactId);
+        } else {
+          const { data: created, error: createErr } = await supabase
+            .from("ark_contacts")
+            .insert({ name, email, phone, stage: "new", next_touch_at: today })
+            .select("id")
+            .single();
+          if (createErr) throw createErr;
+          contactId = created.id;
+        }
+
+        await supabase.from("ark_quotes").insert({
+          contact_id: contactId,
           pickup_zip: pickupZip,
           delivery_zip: deliveryZip,
           transport_type: transportType,
@@ -84,32 +121,7 @@ export async function POST(request: Request) {
           vehicle_model: vehicleModel,
           is_running: isRunning,
           pickup_date: pickupDate || null,
-          name,
-          phone,
-          email,
-          status: "new",
         });
-
-        // Upsert contact
-        const { data: existing } = await supabase
-          .from("contacts")
-          .select("id, total_quotes")
-          .eq("email", email)
-          .single();
-
-        if (existing) {
-          await supabase
-            .from("contacts")
-            .update({
-              total_quotes: existing.total_quotes + 1,
-              last_quote_date: new Date().toISOString(),
-              phone,
-              name,
-            })
-            .eq("id", existing.id);
-        } else {
-          await supabase.from("contacts").insert({ name, email, phone });
-        }
       } catch (dbErr) {
         console.error("[QUOTE_API] Supabase error (non-fatal):", dbErr);
       }
@@ -230,7 +242,14 @@ Customer:
       replyTo: email,
     });
 
-    console.log("[QUOTE_API] Email sent:", result);
+    // The SDK reports API failures in result.error rather than throwing. The
+    // lead is already stored above, so a failed notification email must be
+    // loud in the logs but must not read as a failed submission.
+    if (result.error) {
+      console.error("[QUOTE_API] Email failed:", result.error);
+    } else {
+      console.log("[QUOTE_API] Email sent:", result.data?.id);
+    }
 
     return Response.json(
       { success: true, id: result.data?.id },
