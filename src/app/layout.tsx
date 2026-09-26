@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     "Licensed & insured auto transport across the United States. Open & enclosed carrier options for dealers, auctions, businesses, and individuals. Get a free quote today.",
   keywords:
     "auto transport, car shipping, vehicle transportation, dealer transport, auction transport, enclosed transport",
+  appleWebApp: { title: "Ark Auto" },
   openGraph: {
     title: "Ark Auto Logistics | Reliable Vehicle Transportation",
     description:
