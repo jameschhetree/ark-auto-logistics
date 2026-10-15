@@ -1,4 +1,5 @@
 "use client";
+import { TruckProgress } from "./TruckProgress";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -61,6 +62,7 @@ export function Navbar() {
           {open ? "Close ×" : "Menu ☰"}
         </button>
       </div>
+      <TruckProgress />
       {open ? (
         <nav
           id="mobile-navigation"

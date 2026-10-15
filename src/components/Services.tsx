@@ -8,7 +8,7 @@ const services = [
   {
     title: "Enclosed Auto Transport",
     copy: "Additional protection in transit for luxury, classic, and exotic vehicles.",
-    image: "/hero.jpg",
+    image: "/enclosed-transport.svg",
   },
   {
     title: "Dealer & Auction Transport",
@@ -43,6 +43,11 @@ export function Services() {
                   sizes="(max-width: 760px) 100vw, 33vw"
                 />
                 <span>0{index + 1}</span>
+                {index === 1 ? (
+                  <small className="ark-service-illustration">
+                    Service illustration
+                  </small>
+                ) : null}
               </div>
               <div className="ark-service-copy">
                 <h3>{service.title}</h3>
