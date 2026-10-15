@@ -42,7 +42,7 @@ const CARDS = [
 
 export default function ContactPage() {
   return (
-    <div className="pt-20">
+    <div className="pt-20 ark-contact-page">
       {/* Header */}
       <section className="bg-ark-surface border-b border-ark-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 text-center">

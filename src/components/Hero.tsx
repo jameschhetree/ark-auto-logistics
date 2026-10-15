@@ -1,73 +1,47 @@
 import Image from "next/image";
-import { QuoteForm } from "./QuoteForm";
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center pt-20">
-      {/* Background image with dark overlay */}
-      <div className="absolute inset-0">
-        <Image
-          src="/hero-v2.jpg"
-          alt="Car carrier truck transporting vehicles"
-          fill
-          className="object-cover"
-          priority
-          quality={85}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/70 to-black/50" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ark-bg via-transparent to-transparent" />
-      </div>
-
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full py-16 lg:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left: Copy */}
-          <div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
-              Reliable Vehicle
-              <br />
-              Transportation
-              <br />
-              <span className="text-ark-silver">Across the United States</span>
-            </h1>
-            <p className="mt-6 text-lg text-ark-muted max-w-xl leading-relaxed">
-              Open &amp; Enclosed Auto Transport for Dealers, Auctions,
-              Businesses, and Individuals.
-            </p>
-
-            {/* Check bullets */}
-            <ul className="mt-8 space-y-3">
-              {[
-                "Nationwide Coverage",
-                "Licensed & Insured",
-                "Dedicated Support",
-                "Competitive Pricing",
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-3 text-white">
-                  <svg className="flex-shrink-0 w-5 h-5 text-[#FFD700]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-sm font-medium">{item}</span>
-                </li>
-              ))}
-            </ul>
-
-            <a
-              href="#quote"
-              className="mt-10 inline-flex items-center gap-2 rounded-lg bg-ark-red px-8 py-4 text-base font-bold text-white hover:bg-ark-red-dark transition-colors shadow-lg shadow-ark-red/25"
-            >
-              Get a Free Quote
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </a>
-          </div>
-
-          {/* Right: Quote form */}
-          <div id="quote" className="scroll-mt-24">
-            <QuoteForm variant="stepped" />
-          </div>
+    <section className="ark-hero" aria-labelledby="hero-title">
+      <Image
+        src="/hero-v2.jpg"
+        alt="Vehicle carrier on the road"
+        fill
+        priority
+        sizes="100vw"
+        quality={85}
+        className="ark-hero-image"
+      />
+      <div className="ark-hero-shade" />
+      <div className="ark-container ark-hero-copy">
+        <p className="ark-eyebrow">ARK AUTO LOGISTICS · NATIONWIDE TRANSPORT</p>
+        <h1 id="hero-title">
+          YOUR VEHICLE.
+          <br />
+          OUR COMMITMENT.
+          <br />
+          <span>EVERY MILE.</span>
+        </h1>
+        <p className="ark-hero-description">
+          Open &amp; enclosed auto transport for dealerships, auctions,
+          businesses, and individuals. A dedicated team from pickup to delivery.
+        </p>
+        <div className="ark-actions">
+          <a className="ark-button" href="tel:3014078822">
+            Call Ark Now <span aria-hidden="true">↗</span>
+          </a>
+          <a className="ark-button ark-button-outline" href="#quote">
+            Get a Free Quote <span aria-hidden="true">→</span>
+          </a>
         </div>
       </div>
+      <a
+        href="#about"
+        className="ark-scroll"
+        aria-label="Explore Ark Auto Logistics"
+      >
+        ↓
+      </a>
     </section>
   );
 }
