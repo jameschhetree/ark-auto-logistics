@@ -184,7 +184,7 @@ export function QuoteSection() {
           <a className="ark-email" href="mailto:arkautologistics@gmail.com">
             arkautologistics@gmail.com
           </a>
-          <p className="ark-contact-hours">Mon–Sat · 8AM–6PM</p>
+          <p className="ark-contact-hours">Mon–Sat · 8AM–11PM</p>
         </div>
         <div>
           <QuoteForm variant="stepped" />

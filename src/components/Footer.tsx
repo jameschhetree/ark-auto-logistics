@@ -40,7 +40,7 @@ export function Footer() {
             <a href="mailto:arkautologistics@gmail.com">
               arkautologistics@gmail.com
             </a>
-            <p>Mon–Sat · 8AM–6PM</p>
+            <p>Mon–Sat · 8AM–11PM</p>
           </div>
         </div>
         <div className="ark-footer-bottom">

@@ -35,7 +35,7 @@ const CARDS = [
       </svg>
     ),
     label: "Business Hours",
-    value: "Mon - Sat: 8AM - 6PM",
+    value: "Mon - Sat: 8AM - 11PM",
     href: null,
   },
 ];
