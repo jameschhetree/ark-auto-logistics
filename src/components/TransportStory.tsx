@@ -181,8 +181,8 @@ export function QuoteSection() {
           <a className="ark-big-phone" href="tel:3014078822">
             (301) 407-8822
           </a>
-          <a className="ark-email" href="mailto:arkautologistics@gmail.com">
-            arkautologistics@gmail.com
+          <a className="ark-email" href="mailto:info@arkautologistics.com">
+            info@arkautologistics.com
           </a>
           <p className="ark-contact-hours">Mon–Sat · 8AM–11PM</p>
         </div>

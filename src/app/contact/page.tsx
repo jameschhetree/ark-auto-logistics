@@ -25,8 +25,8 @@ const CARDS = [
       </svg>
     ),
     label: "Email",
-    value: "arkautologistics@gmail.com",
-    href: "mailto:arkautologistics@gmail.com",
+    value: "info@arkautologistics.com",
+    href: "mailto:info@arkautologistics.com",
   },
   {
     icon: (

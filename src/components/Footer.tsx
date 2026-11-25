@@ -37,8 +37,8 @@ export function Footer() {
           <div>
             <h2>LET’S TALK TRANSPORT</h2>
             <a href="tel:3014078822">(301) 407-8822</a>
-            <a href="mailto:arkautologistics@gmail.com">
-              arkautologistics@gmail.com
+            <a href="mailto:info@arkautologistics.com">
+              info@arkautologistics.com
             </a>
             <p>Mon–Sat · 8AM–11PM</p>
           </div>
